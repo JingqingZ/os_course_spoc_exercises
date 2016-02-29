@@ -1,8 +1,8 @@
 # lab0 SPOC思考题
 
-## 分析和实验funcall.c，需要完成的内容包括： 
+## 分析和实验funcall.c，需要完成的内容包括：
 
-### 修改代码，可正常显示小组两位同学的学号（用字符串） 
+### 修改代码，可正常显示小组两位同学的学号（用字符串）
 ```c
 #include <u.h>
 int ret;
@@ -12,6 +12,84 @@ out(port, val)
   asm(LBL,16); // load register b with val
   asm(BOUT);   // output byte to console
 }
+##**提前准备**
+（请在上课前完成）
+
+ - 完成lec2的视频学习和提交对应的在线练习
+ - git pull ucore_os_lab, v9_cpu, os_course_spoc_exercises  　in github repos。这样可以在本机上完成课堂练习。
+ - 了解代码段，数据段，执行文件，执行文件格式，堆，栈，控制流，函数调用,函数参数传递，用户态（用户模式），内核态（内核模式）等基本概念。思考一下这些基本概念在linux, ucore, v9-cpu中的os*.c中是如何具体体现的。
+ - 安装好ucore实验环境，能够编译运行ucore labs中的源码。
+ - 会使用linux中的shell命令:objdump，nm，file, strace，gdb等，了解这些命令的用途。
+ - 会编译，运行，使用v9-cpu的dis,xc, xem命令（包括启动参数），阅读v9-cpu中的cpu.md文档，了解汇编指令的类型和含义等，了解v9-cpu的细节。如能debug dis, xc, xem更佳。
+ - 了解基于v9-cpu的执行文件的格式和内容，以及它是如何加载到v9-cpu的内存中的。
+ - 在piazza上就学习中不理解问题进行提问。
+
+## 个人思考题
+
+---
+
+能否读懂ucore中的AT&T格式的X86-32汇编语言？请列出你不理解的汇编语言。
+- [x]
+
+>  http://www.imada.sdu.dk/Courses/DM18/Litteratur/IntelnATT.htm
+>  inb一般应用程序用不到的指令等。
+
+虽然学过计算机原理和x86汇编（根据THU-CS的课程设置），但对ucore中涉及的哪些硬件设计或功能细节不够了解？
+- [x]
+
+> 中断寄存器和非通用寄存器等。
+
+
+哪些困难（请分优先级）会阻碍你自主完成lab实验？
+- [x]
+
+>
+
+如何把一个在gdb中或执行过程中出现的物理/线性地址与你写的代码源码位置对应起来？
+- [x]
+
+> 1. 在gdb中通过break加行号得到物理地址，list加*物理地址得到行号。
+> 2. 用nm, objdump工具可以看到
+
+了解函数调用栈对lab实验有何帮助？
+- [x]
+
+> 除了错可以调试
+> 对于函数的调用过程和程序的运行过程有更好的理解。
+> 便于调试以及检查。
+
+你希望从lab中学到什么知识？
+- [x]
+
+>
+
+---
+
+## 小组讨论题
+
+---
+
+搭建好实验环境，请描述碰到的困难和解决的过程。
+- [x]
+
+> 困难：在virtualbox中设置虚拟机的时候找不到Linux的64位选项。
+> 解决：需要通过BIOS设置将电脑的虚拟化功能打开（本电脑LenovoY480的VT功能是锁的，需要打开）。
+> 开始时选择了UBUNTU 32位，不能启动，后来换成64位就能顺利运行
+
+熟悉基本的git命令行操作命令，从github上
+的 http://www.github.com/chyyuu/ucore_lab 下载
+ucore lab实验
+- [x]
+
+> clone 仓库
+> gitclone http://www.github.com/chyyuu/ucore_lab
+
+尝试用qemu+gdb（or ECLIPSE-CDT）调试lab1
+- [x]
+
+> 清除文件夹：make clean
+> 编译lab1：make
+> 调出debug命令行：make debug
 
 int write(int f, char *s, int n)
 {
@@ -21,7 +99,7 @@ int write(int f, char *s, int n)
   while (i--)
     out(f, *s++);
   return i;
-}  
+}
 
 main()
 {
@@ -106,7 +184,7 @@ root/usr/funcall.c  16:     out(f, *s++);
 0000003c  0000180e  LL    0x18 (D 24)     // a = *(24 + sp)
 00000040  0000009d  PSHA            //  sp -= 8, *sp = a
 00000044  ffffb805  JSR   0xffffffb8 (TO 0x0) // *sp=pc, sp -= 8 and jump
-00000048  00001001  ENT   0x10 (D 16)     // sp += 16 
+00000048  00001001  ENT   0x10 (D 16)     // sp += 16
 root/usr/funcall.c  17:   return i;
 0000004c  0000040e  LL    4
 00000050  00000157  SUBI  1
@@ -115,7 +193,7 @@ root/usr/funcall.c  17:   return i;
 0000005c  00000086  BNZ   <fwd>
 00000060  0000040e  LL    4
 00000064  00000802  LEV   8
-root/usr/funcall.c  18: }  
+root/usr/funcall.c  18: }
 root/usr/funcall.c  19:
 root/usr/funcall.c  20: main()
 00000068  00000802  LEV   8 // pc= *sp, sp += 8
@@ -125,7 +203,7 @@ root/usr/funcall.c  23:   //Change S1/S2 ID to your student ID, and change 12 to
 root/usr/funcall.c  24:   ret = write(1, "2012011380 2012011297" , 21);
 0000006c  0000159e  PSHI  21 // sp -= 8, *sp = 21, 21 is the length
 00000070  00000008  LEAG  0 // a = sp/pc + 0
-00000074  0000009d  PSHA    // sp -= 8, *sp = a 
+00000074  0000009d  PSHA    // sp -= 8, *sp = a
 00000078  0000019e  PSHI  1 // store 1
 0000007c  ffff9005  JSR   -112  // *sp=pc, sp -= 8, jump
 00000080  00001801  ENT   24 // sp += 24
@@ -162,20 +240,47 @@ root/usr/funcall.c  27:
 
 ### 分析并说明funcall执行文件的格式和内容　
 > 首先hdr信息，然后是代码、常用数据、全局变量
+### 提前准备
+```
+sudo apt-get install hexedit
+cd YOUR v9-cpu DIR
+git pull
+cd YOUR os_course_spoc_exercise DIR
+git pull
+```
 
-## 分析和实验os0.c，需要完成的内容包括： 
+分析和实验funcall.c，需要完成的内容包括：
+-[X]
+
+ - 修改代码，可正常显示小组两位同学的学号（用字符串）
+ - 生成funcall.c的汇编码，理解其实现并给汇编码写注释
+ - 尝试用xem的简单调试功能单步调试代码
+ - 回答如下问题：
+   - funcall中的堆栈有多大？是内核态堆栈还是用户态堆栈
+   - funcall中的全局变量ret放在内存中何处？如何对它寻址？
+   - funcall中的字符串放在内存中何处？如何对它寻址？
+   - 局部变量i在内存中的何处？如何对它寻址？
+   - 当前系统是处于中断使能状态吗？
+   - funcall中的函数参数是如何传递的？函数返回值是如何传递的？
+   - 分析并说明funcall执行文件的格式和内容
+　
+
+分析和实验os0.c，需要完成的内容包括：
+-[X]
+
+## 分析和实验os0.c，需要完成的内容包括：
  - 生成os0.c的汇编码，理解其实现并给汇编码写注释
  - 尝试用xem的简单调试功能单步调试代码
  - 回答如下问题：
-   - 何处设置的中断使能？   
+   - 何处设置的中断使能？
    - 系统何时处于中断屏蔽状态？
    - 如果系统处于中断屏蔽状态，如何让其中断使能？
    - 系统产生中断后，CPU会做哪些事情？（在没有软件帮助的情况下）
    - CPU执行RTI指令的具体完成工作是哪些？
 
-## [HARD]分析和实验os1/os3.c，需要完成的内容包括： 
+## [HARD]分析和实验os1/os3.c，需要完成的内容包括：
  - os1中的task1和task2的堆栈的起始和终止地址是什么？
  - os1是如何实现任务切换的？
- - os3中的task1和task2的堆栈的起始和终止地址是什么？
+ - os3中的task1和task2的栈的起始和终止地址是什么？
  - os3是如何实现任务切换的？
  - os3的用户态task能够破坏内核态的系统吗？
