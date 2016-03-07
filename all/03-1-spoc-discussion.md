@@ -33,6 +33,73 @@ NOTICE
 
 请参考ucore lab2代码，采用`struct pmm_manager` 根据你的`学号 mod 4`的结果值，选择四种（0:最优匹配，1:最差匹配，2:最先匹配，3:buddy systemm）分配算法中的一种或多种，在应用程序层面(可以 用python,ruby,C++，C，LISP等高语言)来实现，给出你的设思路，并给出测试用例。 (spoc)
 
+```python
+# mm manager, first_fit
+
+occupied_space = dict()
+free_space = dict()
+
+
+def _mm_init():
+    global free_space
+    free_space = dict({0: 1024})
+    global occupied_space
+    occupied_space = dict()
+
+
+def _free(start):
+    if start in occupied_space:
+        len = occupied_space[start]
+        occupied_space.pop(start, None)
+        free_space[start] = len
+        s = start
+        # merge
+        for i in range(0, 1024):
+            if i in free_space and free_space[i] + i == start:
+                free_space[i] = free_space[i] + len
+                free_space.pop(start, None)
+                s = i
+                break
+        if (s + free_space[s]) in free_space:
+            free_space[s] = free_space[s] + free_space[s + free_space[s]]
+            free_space.pop(s + free_space[s], None)
+        return len
+    return -1
+
+
+def _malloc(size):
+    for i in range(0, 1024):
+        if i in free_space and free_space[i] >= size:
+            free_space[i + size] = free_space[i] - size
+            free_space.pop(i, None)
+            occupied_space[i] = size
+            return i
+    return -1
+
+
+def main():
+    _mm_init()
+    start0 = _malloc(10)
+    # len0 = _free(start0)
+    print(start0)
+    # print(len0)
+    start1 = _malloc(20)
+    # len1 = _free(start1)
+    print(start1)
+    # print(len1)
+    start2 = _malloc(30)
+    # len2 = _free(start2)
+    print(start2)
+    # print(len2)
+    print(_free(start1))
+    print(_free(start0))
+    start3 = _malloc(25)
+    print(start3)
+
+if __name__ == "__main__":
+    main()
+```
+
 ```
 如何表示空闲块？ 如何表示空闲块列表？ 
 [(start0, size0),(start1,size1)...]
