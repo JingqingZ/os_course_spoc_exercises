@@ -105,6 +105,7 @@ Virtual Address 03df:
 Virtual Address 69dc:
   --> pde index:0x1a  pde contents:d2(valid 1, pfn 0x52)
     --> pte index:0x0e  pte contents:7f(invalid 0, pfn 0x7f)
+      --> Fault (page table entry not valid)
    
 虚拟地址15位（32KB空间）的格式为：前5位为第一级页表，中间5位为第二级页表，最后5位为页内偏移
 第一级页表，PDE的基地址为0x220（0x220 --> 001 0001 00000 --> page 11）加上虚拟地址的前五位（第一级页表index）
