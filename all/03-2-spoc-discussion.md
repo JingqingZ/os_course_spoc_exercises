@@ -95,6 +95,21 @@ PT6..0:页表的物理基址>>5
    Virtual Address 6b22
 2) Virtual Address 03df
    Virtual Address 69dc
+```
+Virtual Address 03df:
+  --> pde index:0x0  pde contents:da(valid 1, pfn 0x5a)
+    --> pte index:0x1e  pte contents:85(valid 1, pfn 0x05)
+      --> Translates to Physical Address 0xbf --> Value: 0f
+
+Virtual Address 69dc:
+  --> pde index:0x1a  pde contents:d2(valid 1, pfn 0x52)
+    --> pte index:0x0e  pte contents:7f(invalid 0, pfn 0x7f)
+   
+虚拟地址15位（32KB空间）的格式为：前5位为第一级页表，中间5位为第二级页表，最后5位为页内偏移
+第一级页表，PDE的基地址为0x220（0x220 --> 001 0001 00000 --> page 11）加上虚拟地址的前五位（第一级页表index）
+得到PDE，根据格式，查valid，然后得到PTE的基地址，然后加上虚拟地址的中五位（第二级页表index）
+得到PTE，根据格式，查valid，然后得到物理地址的基地址，然后加上最后五位的页内偏移，得到结果
+```
 3) Virtual Address 317a
    Virtual Address 4546
 4) Virtual Address 2c03
@@ -123,6 +138,67 @@ Virtual Address 7268:
 
 
 （3）请基于你对原理课二级页表的理解，并参考Lab2建页表的过程，设计一个应用程序（可基于python, ruby, C, C++，LISP等）可模拟实现(2)题中描述的抽象OS，可正确完成二级页表转换。
+
+```python
+# 2-level page index
+
+data = dict()
+pde_base = '11'
+
+
+def loaddata(filename):
+    global data
+    data = dict()
+    infile = open(filename)
+    for line in infile:
+        content = line.split(": ")
+        page_index = content[0].split()
+        data[page_index[1]] = content[1].split()
+    infile.close()
+
+
+def addr_split(addr):
+    b = bin(int(addr, 16))[2:].zfill(15)
+    return b[:5], b[5:10], b[-5:]
+
+
+def p1_index(off):
+    global data
+    return data[pde_base][int(off, 2)]
+
+
+def phy_index(pde, off):
+    b = bin(int(pde, 16))[2:].zfill(8)
+    if b[0] == '0':
+        return -1
+    else:
+        h1 = str(hex(int(b[1:4], 2))[2:])
+        h2 = str(hex(int(b[4:], 2))[2:])
+        return data[h1 + h2][int(off, 2)]
+
+
+def find_value(addr):
+    p1, p2, o = addr_split(addr)
+    pde = p1_index(p1)
+    pte = phy_index(pde, p2)
+    if pte == -1:
+        return -1
+    pad = phy_index(pte, o)
+    if pad == -1:
+        return -1
+    return pad
+
+
+def main():
+    loaddata("./03-2-data.txt")
+    print(find_value("03df"))
+    print(find_value("69dc"))
+
+
+if __name__ == "__main__":
+    main()
+
+```
 
 
 （4）假设你有一台支持[反置页表](http://en.wikipedia.org/wiki/Page_table#Inverted_page_table)的机器，请问你如何设计操作系统支持这种类型计算机？请给出设计方案。
