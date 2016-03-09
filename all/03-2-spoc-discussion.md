@@ -96,6 +96,7 @@ PT6..0:页表的物理基址>>5
 2) Virtual Address 03df
    Virtual Address 69dc
 ```
+```
 Virtual Address 03df:
   --> pde index:0x0  pde contents:da(valid 1, pfn 0x5a)
     --> pte index:0x1e  pte contents:85(valid 1, pfn 0x05)
@@ -109,6 +110,7 @@ Virtual Address 69dc:
 第一级页表，PDE的基地址为0x220（0x220 --> 001 0001 00000 --> page 11）加上虚拟地址的前五位（第一级页表index）
 得到PDE，根据格式，查valid，然后得到PTE的基地址，然后加上虚拟地址的中五位（第二级页表index）
 得到PTE，根据格式，查valid，然后得到物理地址的基地址，然后加上最后五位的页内偏移，得到结果
+```
 ```
 3) Virtual Address 317a
    Virtual Address 4546
