@@ -4,13 +4,35 @@
 ### 进程切换
 
 (1)ucore的进程控制块数据结构是如何组织的？主要字段分别表示什么？有哪些函数对它进行了修改？有哪些函数用到它？
+
+> 进程控制块数据结构和字段含义
 ```
-arch_proc_struct
-mm_struct
-need_resched
-wait_state
-run_link、list_link、hash_link
+enum proc_state state;                  // Process state
+int pid;                                // Process ID
+int runs;                               // the running times of Process
+uintptr_t kstack;                       // Process kernel stack
+volatile bool need_resched;             // bool value: need to be rescheduled to release CPU
+struct proc_struct *parent;             // the parent process
+    struct mm_struct *mm;                       // Process's memory management field
+    struct context context;                     // Switch here to run process
+    struct trapframe *tf;                       // Trap frame for current interrupt
+    uintptr_t cr3;                              // CR3 register: the base addr of Page Directroy Table(PDT)
+    uint32_t flags;                             // Process flag
+    char name[PROC_NAME_LEN + 1];               // Process name
+    list_entry_t list_link;                     // Process link list
+    list_entry_t hash_link;                     // Process hash list
+    int exit_code;                              // exit code (be sent to parent proc)
+    uint32_t wait_state;                        // waiting state
+    struct proc_struct *cptr, *yptr, *optr;     // relations between processes
+    struct run_queue *rq;                       // running queue contains Process
+    list_entry_t run_link;                      // the entry linked in run queue
+    int time_slice;                             // time slice for occupying the CPU
+    skew_heap_entry_t lab6_run_pool;            // FOR LAB6 ONLY: the entry in the run pool
+    uint32_t lab6_stride;                       // FOR LAB6 ONLY: the current stride of the process
+    uint32_t lab6_priority;                     // FOR LAB6 ONLY: the priority of process, set by lab6_set_priority(uint32_t)
+    struct files_struct *filesp;                // the file related info(pwd, files_count, files_array, fs_semaphore) of process
 ```
+> 2. 
 
 ### 进程创建
 
