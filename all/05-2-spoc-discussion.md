@@ -34,6 +34,8 @@ uint32_t lab6_stride;                       // FOR LAB6 ONLY: the current stride
 uint32_t lab6_priority;                     // FOR LAB6 ONLY: the priority of process, set by lab6_set_priority(uint32_t)
 struct files_struct *filesp;                // the file related info(pwd, files_count, files_array, fs_semaphore) of process
 ```
+> 有哪些函数会调用或者进行修改
+> 	alloc\_proc() do\_wait() do\_kill() do\_sleep() do\_exit() do_\fork() do\_execve() do\_yield() find\_proc() proc\_run() proc\_init() set\_proc\_name() get\_proc\_name()
 
 ### 12.2 进程创建
 
