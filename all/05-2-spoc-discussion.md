@@ -35,7 +35,7 @@ uint32_t lab6_priority;                     // FOR LAB6 ONLY: the priority of pr
 struct files_struct *filesp;                // the file related info(pwd, files_count, files_array, fs_semaphore) of process
 ```
 > 有哪些函数会调用或者进行修改
-> 	alloc\_proc() do\_wait() do\_kill() do\_sleep() do\_exit() do_\fork() do\_execve() do\_yield() find\_proc() proc\_run() proc\_init() set\_proc\_name() get\_proc\_name()
+> 	alloc\_proc() do\_wait() do\_kill() do\_sleep() do\_exit() do\_fork() do\_execve() do\_yield() find\_proc() proc\_run() proc\_init() set\_proc\_name() get\_proc\_name()
 
 ### 12.2 进程创建
 
