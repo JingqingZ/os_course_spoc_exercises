@@ -35,7 +35,7 @@ uint32_t lab6_priority;                     // FOR LAB6 ONLY: the priority of pr
 struct files_struct *filesp;                // the file related info(pwd, files_count, files_array, fs_semaphore) of process
 ```
 > 有哪些函数会调用或者进行修改
-> 	alloc\_proc() do\_wait() do\_kill() do\_sleep() do\_exit() do\_fork() do\_execve() do\_yield() find\_proc() proc\_run() proc\_init() set\_proc\_name() get\_proc\_name()
+> 	alloc\_proc()初始化新的进程的控制块 do\_wait()需要修改进程状态 do\_kill()需要修改flag等标记 do\_sleep()需要修改进程状态 do\_exit()需要修改进程状态同时进行清理 do\_fork()创建新的子进程需要进行复制 do\_execve()需要修改进程name等 do\_yield()设置reschedule find\_proc()根据pid找到进程控制块 proc\_run()让进程在CPU上跑起来 proc\_init()初始化进程 set\_proc\_name()修改进行name get\_proc\_name()获得进程name
 
 ### 12.2 进程创建
 
