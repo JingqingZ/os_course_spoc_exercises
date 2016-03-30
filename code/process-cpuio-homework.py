@@ -196,7 +196,6 @@ class scheduler:
                 if clock_tick in self.io_finish_times[pid]:
                     # if IO finished, the should do something for related process
                     #YOUR CODE
-                    self.io_finish_times[pid].pop(0)
                     io_done = True
                     self.move_to_ready(STATE_WAIT, pid)
                     self.next_proc()
