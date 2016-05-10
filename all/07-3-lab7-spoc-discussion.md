@@ -65,7 +65,6 @@
   > cvp->owner->next_count是通过释放signal_cv来唤醒的进程数量
   > 不可能<0 也不可能 >1
   
-  -  目前的lab7-answer中管程的实现是Hansen管程类型还是Hoare管程类型？请在lab7-answer中实现另外一种类型的管程。
-  -  现在的管程（条件变量）实现是否有bug?
+  -  目前的lab7-answer中管程的实现是Hansen管程类型还是Hoare管程类型？请在lab7-answer中实现另外一种类型的管程。现在的管程（条件变量）实现是否有bug?
   > Hoare管程
-
+ 
