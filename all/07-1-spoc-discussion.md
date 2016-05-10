@@ -5,35 +5,405 @@
 
 ## 个人思考题
 
-### 背景
- - 请给出程序正确性的定义或解释。
- - 在一个新运行环境中程序行为与原来的预期不一致，是错误吗？
- - 程序并发执行有什么好处和障碍？
- - 什么是原子操作？
+### 17.1 背景
+1. 请给出程序正确性的定义或解释。
 
-### 现实生活中的同步问题
+ > 我们只能在确定的限制条件下来讨论“正确性”的定义或解释，没有无条件的“正确”。
 
- - 家庭采购中的同步问题与操作系统中进程同步有什么区别？
- - 如何通过枚举和分类方法检查同步算法的正确性？
- - 尝试描述方案四的正确性。
- - 互斥、死锁和饥饿的定义是什么？
+2. 在一个新运行环境中程序行为与原来的预期不一致，是错误吗？
+3. 程序并发执行有什么好处和障碍？
+4. 什么是原子操作？
 
-### 临界区和禁用硬件中断同步方法
+### 17.2 现实生活中的同步问题
 
- - 什么是临界区？
- - 临界区的访问规则是什么？
- - 禁用中断是如何实现对临界区的访问控制的？有什么优缺点？
+1. 家庭采购中的同步问题的5种解决方案的核心思路是什么？举例描述可能的漏洞。
 
-### 基于软件的同步方法
+ > 方案一：先检查，后加相同的标签
 
- - 尝试通过枚举和分类方法检查Peterson算法的正确性。
- - 尝试准确描述Eisenberg同步算法，并通过枚举和分类方法检查其正确性。
+ > 方案二：先加相同的标签，后检查
 
-### 高级抽象的同步方法
+ > 方案三：先加不同的标签，后检查
 
- - 如何证明TS指令和交换指令的等价性？
- - 为什么硬件原子操作指令能简化同步算法的实现？
- 
+ > 方案四：先加不同的标签，后进行非对称检查
+
+ > 方案五：原子操作
+
+2. 家庭采购中的同步问题与操作系统中进程同步有什么区别？
+2. 如何通过枚举和分类方法检查同步算法的正确性？
+3. 尝试描述方案四的正确性。
+4. 互斥、死锁和饥饿的定义是什么？
+
+### 17.3 临界区和禁用硬件中断同步方法
+
+1. 什么是临界区？
+
+ > 临界资源、互斥执行、代码
+
+2. 临界区的访问规则是什么？
+
+ > 空闲则入、忙则等待、有限等待、让权等待
+
+3. 禁用中断是如何实现对临界区的访问控制的？有什么优缺点？
+
+### 17.4 基于软件的同步方法
+
+1. 软件同步方法中的5种解决方案（三种尝试方案、Peterson算法和Eisenberg算法）的核心思路是什么？举例描述可能的漏洞。
+
+ > 方案一：turn 表示允许进入临界区的线程标识；
+
+ > 方案二：flag[i] 表示线程i是否在临界区；
+先判断，后修改变量；
+
+ > 方案二：flag[i] 表示线程i想要进入临界区；
+先修改变量，后判断；
+
+ > Peterson算法：turn 表示进入临界区的线程标识，flag[i] 表示线程i想要进入临界区；
+先修改变量，后判断；后修改者等待；
+只适用于两个进程；
+
+ > Eisenberg算法：flag[i] 表示线程i想要进入临界区，turn 表示进入临界区的线程标识（有多个想进入时）；
+进入区：先修改flag，后判断是否有多个想进入；后修改者等待；
+退出区：修改turn；
+适用于多个进程；
+
+2. 尝试通过枚举和分类方法检查Peterson算法的正确性。
+3. 尝试准确描述Eisenberg同步算法，并通过枚举和分类方法检查其正确性。
+4. (spoc)基于“python, ruby, C, C++，LISP、JavaScript”等语言模拟实现Eisenberg同步算法，并给出覆盖所有枚举分类的测试用例，在实现报告写出设计思路和测试结果分析。
+
+### 17.5 高级抽象的同步方法
+
+1. 如何证明TS指令和交换指令的等价性？
+2. 自旋锁（spinlock）和无忙等待锁是如何实现同步的？它们有什么不同？
+3. 为什么硬件原子操作指令能简化同步算法的实现？
+
+### 17.6 判断题
+
+1. 下列二线程同步机制是否有误？请给出分析．
+
+```
+CONCEPT: A shared variable named turn is used to keep track of whose turn it is to enter the critical section.
+INITIALIZATION:
+
+	shared int turn;
+	...
+	turn = i ;
+ENTRY PROTOCOL (for Process i ):
+	/* wait until it's our turn */
+	while (turn != i ) {
+	}
+EXIT PROTOCOL (for Process i ):
+	/* pass the turn on */
+	turn = j ;
+```
+
+
+2. 下列二线程同步机制是否有误？请给出分析．
+
+```
+CONCEPT: A shared Boolean array named flags contains a flag for each process. The flag values are BUSY when the process is in its critical section (using the resource), or FREE when it is not.
+INITIALIZATION:
+
+	typedef char boolean;
+	...
+	shared boolean flags[n - 1];
+	...
+	flags[i ] = FREE;
+	...
+	flags[j ] = FREE;
+	...
+ENTRY PROTOCOL (for Process i ):
+	/* wait while the other process is in its CS */
+	while (flags[j ] == BUSY) {
+	}
+-->
+	/* claim the resource */
+	flags[i ] = BUSY;
+EXIT PROTOCOL (for Process i ):
+	/* release the resource */
+	flags[i ] = FREE;
+
+```
+
+3. 下列二线程同步机制是否有误？请给出分析．
+
+```
+CONCEPT: Again we use a shared Boolean array as in Algorithm 2. Each process sets its flag before  testing the other flag, thus avoiding the problem of violating mutual exclusion.
+INITIALIZATION:
+
+	typedef char boolean;
+	...
+	shared boolean flags[n -1];
+	...
+	flags[i ] = FREE;
+	...
+	flags[j ] = FREE;
+	...
+ENTRY PROTOCOL (for Process i ):
+	/* claim the resource */
+	flags[i ] = BUSY;
+-->
+	/* wait if the other process is using the resource */
+	while (flags[j ] == BUSY) {
+	}
+EXIT PROTOCOL (for Process i ):
+	/* release the resource */
+	flags[i ] = FREE;
+```
+
+4. 下列二线程同步机制是否有误？请给出分析．
+
+```
+CONCEPT: To avoid the deadlock problem of Algorithm 3, we periodically clear and reset our own flag while waiting for the other one.
+INITIALIZATION:
+
+	typedef char boolean;
+	...
+	shared boolean flags[n -1];
+	...
+	flags[i ] = FREE;
+	...
+	flags[j ] = FREE;
+	...
+ENTRY PROTOCOL (for Process i ):
+	/* claim the resource */
+	flags[i ] = BUSY;
+-->
+	/* wait if the other process is using the resource */
+	while (flags[j ] == BUSY) {
+		flags[i ] = FREE;
+		delay a while ;
+		flags[i ] = BUSY;
+	}
+EXIT PROTOCOL (for Process i ):
+	/* release the resource */
+	flags[i ] = FREE;
+
+```
+
+5. 下列二线程同步机制是否有误？请给出分析．
+
+```
+CONCEPT: Both the turn variable and the status flags are combined in a way which we (the requesting process) set our flag and then check our neighbor's flag. 
+
+INITIALIZATION:
+
+	typedef char boolean;
+	...
+	shared boolean flags[n -1];
+	shared int turn;
+	...
+	turn = i ;
+	...
+	flags[i ] = FREE;
+	...
+	flags[j ] = FREE;
+	...
+ENTRY PROTOCOL (for Process i ):
+	/* claim the resource */
+	flags[i ] = BUSY;
+
+	/* wait if the other process is using the resource */
+	while (flags[j ] == BUSY) {
+
+		/* if waiting for the resource, also wait our turn */
+		if (turn != i ) {
+		
+			/* but release the resource while waiting */
+			flags[i ] = FREE;
+			while (turn != i ) {
+			}
+			flags[i ] = BUSY;
+		}
+
+	}
+EXIT PROTOCOL (for Process i ):
+	/* pass the turn on, and release the resource */
+	turn = j ;
+	flags[i ] = FREE;
+
+```
+
+6. 下列二线程同步机制是否有误？请给出分析． 
+
+```
+CONCEPT: Both the turn variable and the status flags are used.
+
+INITIALIZATION:
+
+	typedef char boolean;
+	...
+	shared boolean flags[n -1];
+	shared int turn;
+	...
+	turn = i ;
+	...
+	flags[i ] = FREE;
+	...
+	flags[j ] = FREE;
+	...
+ENTRY PROTOCOL (for Process i ):
+	/* claim the resource */
+	flags[i ] = BUSY;
+
+	/* give away the turn */
+	turn = j ;
+	/* wait while the other process is using the resource *and* has the turn */
+	while ((flags[j ] == BUSY) && (turn != i )) {
+	}
+EXIT PROTOCOL (for Process i ):
+	/* release the resource */
+	flags[i ] = FREE;
+
+```
+
+6. 下列N线程同步机制是否有误？请给出分析． 
+
+```
+CONCEPT: The turn variable and status flags are used as in Dekker's algorithm for the 2-process case. The flags now have three possible values: WAITING for a process in the entry protocol, waiting for the resource' ACTIVE for a process in the critical section, using the resource; and IDLE for other cases.
+
+Process priority is maintained in circular order beginning with the one holding the turn. Each process begins the entry protocol by scanning all processes from the one with the turn up to itself. These are the only processes that might have to go first if there is competition.
+
+If the scan finds all processes idle, the process advances tentatively to the ACTIVE state. However, it is still possible that another process which started scanning later but belongs before us will also reach this state. We check one more time to be sure there are no active processes.
+
+INITIALIZATION:
+
+	shared enum states {IDLE, WAITING, ACTIVE} flags[n -1];
+	shared int turn;
+	int index;	/* not shared! */
+	...
+	turn = 0;
+	...
+	for (index=0; index<n; index++) {
+		flags[index] = IDLE;
+	}
+ENTRY PROTOCOL (for Process i ):
+
+	repeat {
+
+		/* announce that we need the resource */
+		flags[i] = WAITING;
+
+		/* scan processes from the one with the turn up to ourselves. */
+		/* repeat if necessary until the scan finds all processes idle */
+		index = turn;
+		while (index != i) {
+			if (flag[index] != IDLE) index = turn;
+			else index = index+1 mod n;
+		}
+
+		/* now tentatively claim the resource */
+		flags[i] = ACTIVE;
+
+		/* find the first active process besides ourselves, if any */
+		index = 0;
+		while ((index < n) && ((index == i) || (flags[index] != ACTIVE))) {
+			index = index+1;
+		}
+
+	/* if there were no other active processes, AND if we have the turn
+	   or else whoever has it is idle, then proceed.  Otherwise, repeat
+	   the whole sequence. */
+	} until ((index >= n) && ((turn == i) || (flags[turn] == IDLE)));
+
+	/* claim the turn and proceed */
+	turn = i;
+EXIT PROTOCOL (for Process i ):
+
+	/* find a process which is not IDLE */
+	/* (if there are no others, we will find ourselves) */
+	index = turn+1 mod n;
+	while (flags[index] == IDLE) {
+		index = index+1 mod n;
+	}
+
+	/* give the turn to someone that needs it, or keep it */
+	turn = index;
+
+	/* we're finished now */
+	flag[i] = IDLE;
+
+```
+
+
+7. 下列N线程同步机制是否有误？请给出分析． 
+
+```
+CONCEPT: Both status values and turn values are used. The status array is expanded to an integer value for each process, which is used to track that process' progress in scanning the status of other processes. The turn value is also expanded to an integer array. Its values represent the relative ordering for each pair of processes.
+
+
+INITIALIZATION:
+
+shared int flags[NUMPROCS];
+shared int turn[NUMPROCS - 1];
+int index;
+
+for (index = 0; index < (NUMPROCS); index++) {
+
+	flags[index] = -1
+}
+
+
+for (index = 0; index < (NUMPROCS-1); index++) {
+	turn[index] = 0;
+}
+
+ENTRY PROTOCOL (for Process i):
+/* repeat for all partners */
+for (count = 0; count < (NUMPROCS-1); count++) {
+
+	flags[i] = count;
+	turn[count] = i;
+
+	"wait until (for all k != i, flag[k]<count) or (turn[count] != i)"
+
+}
+
+EXIT PROTOCOL (for Process i):
+/* tell everyone we are finished */
+flags[i] = -1;
+```
+
+8. 下列N线程同步机制是否有误？请给出分析． 
+
+```
+CONCEPT: A process waiting to enter its critical section chooses a number. This number must be greater than all other numbers currently in use. There is a global shared array of current numbers for each process. The entering process checks all other processes sequentially, and waits for each one which has a lower number. Ties are possible; these are resolved using process IDs.
+
+INITIALIZATION:
+
+	typedef char boolean;
+	...
+	shared boolean choosing[n]
+	shared int num[n];
+	...
+	for (j=0; j < n; j++) {
+		num[j] = 0;
+	}
+	...
+ENTRY PROTOCOL (for Process i):
+	/* choose a number */
+	choosing[i] = TRUE;
+	num[i] = max(num[0], ..., num[n-1]) + 1;
+	choosing[i] = FALSE;
+	
+	/* for all other processes */
+	for (j=0; j < n; j++) {
+	
+		/* wait if the process is currently choosing */
+		while (choosing[j]) {}
+		
+		/* wait if the process has a number and comes ahead of us */
+		if ((num[j] > 0) &&
+		  ((num[j] < num[i]) ||
+		  (num[j] == num[i]) && (j < i))) {
+			while (num[j] > 0) {}
+		}
+	}
+		
+EXIT PROTOCOL (for Process i):
+	/* clear our number */
+	num[i] = 0;
+```
+
 ## 小组思考题
 
 1. （spoc）阅读[简化x86计算机模拟器的使用说明](https://github.com/chyyuu/ucore_lab/blob/master/related_info/lab7/lab7-spoc-exercise.md)，理解基于简化x86计算机的汇编代码。
