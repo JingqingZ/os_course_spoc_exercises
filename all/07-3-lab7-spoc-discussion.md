@@ -57,7 +57,15 @@
 
 2. （扩展练习）请在lab7-answer中分析
   -  cvp->count含义是什么？cvp->count是否可能<0, 是否可能>1？请举例或说明原因。
+  > cvp->count是某个条件下处于睡眠的进程数量；
+  > 不可能<0，因为每次都是先加后减成对出现，count数量一定非负；
+  > 但是可能>1，有可能有多个进程同时在等待同一个条件，都在睡眠状态。
+  
   -  cvp->owner->next_count含义是什么？cvp->owner->next_count是否可能<0, 是否可能>1？请举例或说明原因。
+  > cvp->owner->next_count是通过释放signal_cv来唤醒的进程数量
+  > 不可能<0 也不可能 >1
+  
   -  目前的lab7-answer中管程的实现是Hansen管程类型还是Hoare管程类型？请在lab7-answer中实现另外一种类型的管程。
   -  现在的管程（条件变量）实现是否有bug?
+  > Hoare管程
 
