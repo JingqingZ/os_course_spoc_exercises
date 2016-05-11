@@ -1,0 +1,22 @@
+Driver  Conductor
+    Door closed
+    Conducting
+Started
+Driving
+Stop
+    Door Opened
+    On & Off
+    Door closed
+    Conducting
+Started
+Driving
+Stop
+    Door Opened
+    On & Off
+    Door closed
+    Conducting
+Started
+Driving
+Stop
+    Door Opened
+    On & Off
